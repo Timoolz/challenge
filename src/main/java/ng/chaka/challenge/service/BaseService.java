@@ -70,14 +70,14 @@ public class BaseService {
 
         //GET SUM IN THE LAST 60 SECONDS
         Optional<BigDecimal> sum = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) > 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal::add);
         sum.ifPresent(statistic::setSum);
 
         //GET COUNT IN THE LAST 60 SECONDS
         long count = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) > 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
                 .count();
         statistic.setCount(count);
 
@@ -90,14 +90,14 @@ public class BaseService {
 
         //GET MIN IN THE LAST 60 SECONDS
         Optional<BigDecimal> min = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) > 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
                 .map(Transaction::getAmount)
                 .min(BigDecimal::compareTo);
         min.ifPresent(statistic::setMin);
 
         //GET MAX IN THE LAST 60 SECONDS
         Optional<BigDecimal> max = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) > 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
                 .map(Transaction::getAmount)
                 .max(BigDecimal::compareTo);
         max.ifPresent(statistic::setMax);
@@ -122,6 +122,32 @@ public class BaseService {
     public ResponseEntity deleteAllTransactions() {
         transactionList.clear();
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+
+
+
+    public int maxBinaryGap(int N) {
+        int maxGap = 0;
+        int currentGap = 0;
+        boolean started = false;
+        String binaryRepresentation = Integer.toBinaryString(N);
+        for (Character character : binaryRepresentation.toCharArray()) {
+            if (character.equals('0') && started) {
+                currentGap++;
+            }
+            if (character.equals('1') && !started) {
+                started = true;
+            }
+            if (character.equals('1')) {
+                if(currentGap> maxGap){
+                    maxGap = currentGap;
+                }
+                currentGap = 0;
+            }
+
+        }
+        return maxGap;
     }
 
 }
