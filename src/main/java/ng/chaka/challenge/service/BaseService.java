@@ -18,6 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class BaseService {
 
 
+    private static final String UTC_ZONE_STRING = "UTC";
+    private static final int SIXTY_SECONDS_INTEGER = 60;
 
     private CopyOnWriteArrayList<Transaction> transactionList = new CopyOnWriteArrayList<>();
 
@@ -42,8 +44,8 @@ public class BaseService {
         transactionList.add(transaction);
 
         //IF TransactionDate is older than 60 seconds
-        if (Duration.between(transaction.getTimestamp(), LocalDateTime.now().atZone(ZoneId.of("UTC")))
-                .compareTo(Duration.ofSeconds(60)) > 0) {
+        if (Duration.between(transaction.getTimestamp(), LocalDateTime.now().atZone(ZoneId.of(UTC_ZONE_STRING)))
+                .compareTo(Duration.ofSeconds(SIXTY_SECONDS_INTEGER)) > 0) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
 
@@ -74,14 +76,14 @@ public class BaseService {
 
         //GET SUM IN THE LAST 60 SECONDS
         Optional<BigDecimal> sum = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of(UTC_ZONE_STRING))).compareTo(Duration.ofSeconds(SIXTY_SECONDS_INTEGER)) < 0)
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal::add);
         sum.ifPresent(statistic::setSum);
 
         //GET COUNT IN THE LAST 60 SECONDS
         long count = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of(UTC_ZONE_STRING))).compareTo(Duration.ofSeconds(SIXTY_SECONDS_INTEGER)) < 0)
                 .count();
         statistic.setCount(count);
 
@@ -94,14 +96,14 @@ public class BaseService {
 
         //GET MIN IN THE LAST 60 SECONDS
         Optional<BigDecimal> min = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of(UTC_ZONE_STRING))).compareTo(Duration.ofSeconds(SIXTY_SECONDS_INTEGER)) < 0)
                 .map(Transaction::getAmount)
                 .min(BigDecimal::compareTo);
         min.ifPresent(statistic::setMin);
 
         //GET MAX IN THE LAST 60 SECONDS
         Optional<BigDecimal> max = transactionList.stream()
-                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of("UTC"))).compareTo(Duration.ofSeconds(60)) < 0)
+                .filter(t -> Duration.between(t.getTimestamp(), currentTime.atZone(ZoneId.of(UTC_ZONE_STRING))).compareTo(Duration.ofSeconds(SIXTY_SECONDS_INTEGER)) < 0)
                 .map(Transaction::getAmount)
                 .max(BigDecimal::compareTo);
         max.ifPresent(statistic::setMax);
