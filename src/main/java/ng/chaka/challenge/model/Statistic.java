@@ -6,8 +6,8 @@ public class Statistic {
 
     private BigDecimal sum;
     private BigDecimal avg;
-    private BigDecimal min;
     private BigDecimal max;
+    private BigDecimal min;
     private long count;
 
     public BigDecimal getSum() {
@@ -26,6 +26,14 @@ public class Statistic {
         this.avg = avg;
     }
 
+    public BigDecimal getMax() {
+        return max;
+    }
+
+    public void setMax(BigDecimal max) {
+        this.max = max;
+    }
+
     public BigDecimal getMin() {
         return min;
     }
@@ -34,13 +42,6 @@ public class Statistic {
         this.min = min;
     }
 
-    public BigDecimal getMax() {
-        return max;
-    }
-
-    public void setMax(BigDecimal max) {
-        this.max = max;
-    }
 
     public long getCount() {
         return count;

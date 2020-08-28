@@ -11,15 +11,15 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class BaseService {
 
 
-    private List<Transaction> transactionList = new ArrayList<>();
+
+    private CopyOnWriteArrayList<Transaction> transactionList = new CopyOnWriteArrayList<>();
 
 
     public ResponseEntity createTransaction(TransactionRequest transactionRequest) {
@@ -53,6 +53,10 @@ public class BaseService {
 
 
     private boolean validTransactionRequest(TransactionRequest request) {
+        if(request == null){
+            return false;
+        }
+
         if (!StringUtils.hasText(request.getTimestamp())) {
             return false;
         }
@@ -65,7 +69,7 @@ public class BaseService {
     }
 
     public ResponseEntity<Statistic> getStatistics() {
-        LocalDateTime currentTime = LocalDateTime.now();
+        Instant currentTime = Instant.now();
         Statistic statistic = new Statistic();
 
         //GET SUM IN THE LAST 60 SECONDS
