@@ -6,7 +6,6 @@ import ng.chaka.challenge.service.BaseService;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.jupiter.api.Order;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -16,7 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -64,7 +64,7 @@ public class BaseServiceTest {
         ResponseEntity responseEntity = null;
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setAmount("10.00");
-        transactionRequest.setTimestamp(Instant.now().minusSeconds(65).toString());
+        transactionRequest.setTimestamp(LocalDateTime.now().minusSeconds(65).toInstant(ZoneOffset.UTC).toString());
         responseEntity = baseService.createTransaction(transactionRequest);
         Assert.assertEquals(204, responseEntity.getStatusCode().value());
     }
@@ -76,7 +76,7 @@ public class BaseServiceTest {
         ResponseEntity responseEntity = null;
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setAmount("10.00");
-        transactionRequest.setTimestamp(Instant.now().plusSeconds(3600).toString());
+        transactionRequest.setTimestamp(LocalDateTime.now().plusSeconds(3600).toInstant(ZoneOffset.UTC).toString());
         responseEntity = baseService.createTransaction(transactionRequest);
         Assert.assertEquals(422, responseEntity.getStatusCode().value());
 
@@ -89,13 +89,13 @@ public class BaseServiceTest {
         //Post One transaction
         TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setAmount("10.00");
-        transactionRequest.setTimestamp(Instant.now().minusSeconds(1).toString());
+        transactionRequest.setTimestamp(LocalDateTime.now().minusSeconds(1).toInstant(ZoneOffset.UTC).toString());
         responseEntity = baseService.createTransaction(transactionRequest);
         Assert.assertEquals(201, responseEntity.getStatusCode().value());
 
         //post another transaction
         transactionRequest.setAmount("20.00");
-        transactionRequest.setTimestamp(Instant.now().minusSeconds(1).toString());
+        transactionRequest.setTimestamp(LocalDateTime.now().minusSeconds(1).toInstant(ZoneOffset.UTC).toString());
         responseEntity = baseService.createTransaction(transactionRequest);
         Assert.assertEquals(201, responseEntity.getStatusCode().value());
     }

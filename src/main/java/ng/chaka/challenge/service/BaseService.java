@@ -36,13 +36,13 @@ public class BaseService {
             return new ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         //IF TransactionDate is in the future
-        if (Instant.now().isBefore(transaction.getTimestamp().toInstant(ZoneOffset.UTC))) {
+        if (LocalDateTime.now().isBefore(transaction.getTimestamp())) {
             return new ResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         transactionList.add(transaction);
 
         //IF TransactionDate is older than 60 seconds
-        if (Duration.between(transaction.getTimestamp(), Instant.now().atZone(ZoneId.of("UTC")))
+        if (Duration.between(transaction.getTimestamp(), LocalDateTime.now().atZone(ZoneId.of("UTC")))
                 .compareTo(Duration.ofSeconds(60)) > 0) {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
@@ -69,7 +69,7 @@ public class BaseService {
     }
 
     public ResponseEntity<Statistic> getStatistics() {
-        Instant currentTime = Instant.now();
+        LocalDateTime currentTime = LocalDateTime.now();
         Statistic statistic = new Statistic();
 
         //GET SUM IN THE LAST 60 SECONDS
